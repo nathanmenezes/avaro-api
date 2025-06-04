@@ -1,6 +1,7 @@
 package br.com.mnz.avaroapi.controllers.auth;
 
 import br.com.mnz.avaroapi.domain.dto.request.auth.AuthRequest;
+import br.com.mnz.avaroapi.domain.dto.request.auth.SignUpRequest;
 import br.com.mnz.avaroapi.domain.dto.response.auth.AuthResponse;
 import br.com.mnz.avaroapi.services.auth.AuthService;
 import jakarta.validation.Valid;
@@ -23,5 +24,10 @@ public class AuthController {
     @PostMapping("sign-in")
     public Mono<AuthResponse> signIn(@RequestBody @Valid final AuthRequest authRequest) {
         return this.authService.signIn(authRequest);
+    }
+
+    @PostMapping("sign-up")
+    public Mono<AuthResponse> singUp(@RequestBody @Valid final SignUpRequest signUpRequest) {
+        return this.authService.signUp(signUpRequest);
     }
 }

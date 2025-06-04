@@ -1,7 +1,9 @@
 package br.com.mnz.avaroapi.services.auth;
 
 import br.com.mnz.avaroapi.domain.dto.request.auth.AuthRequest;
+import br.com.mnz.avaroapi.domain.dto.request.auth.SignUpRequest;
 import br.com.mnz.avaroapi.domain.dto.response.auth.AuthResponse;
+import br.com.mnz.avaroapi.services.user.UserService;
 import jakarta.validation.Valid;
 import org.springframework.security.authentication.ReactiveAuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -15,13 +17,16 @@ public class AuthService {
     private final ReactiveAuthenticationManager reactiveAuthenticationManager;
     private final JWTService jwtService;
     private final UserDetailsService userDetailsService;
+    private final UserService userService;
 
     public AuthService(ReactiveAuthenticationManager reactiveAuthenticationManager,
                        JWTService jwtService,
-                       UserDetailsService userDetailsService) {
+                       UserDetailsService userDetailsService,
+                       UserService userService) {
         this.reactiveAuthenticationManager = reactiveAuthenticationManager;
         this.jwtService = jwtService;
         this.userDetailsService = userDetailsService;
+        this.userService = userService;
     }
 
     public Mono<AuthResponse> signIn(@Valid AuthRequest authRequest) {
@@ -35,6 +40,12 @@ public class AuthService {
                     String token = jwtService.generateToken(userDetails);
                     return new AuthResponse(token);
                 })
-                .onErrorResume(e -> Mono.error(new RuntimeException("Falha na autenticação: " + e.getMessage())));
+                .onErrorResume(e -> Mono.error(new RuntimeException(e.getMessage())));
+    }
+
+    public Mono<AuthResponse> signUp(@Valid SignUpRequest signUpRequest) {
+        return this.userService.createUser(signUpRequest)
+                .flatMap(user -> this.signIn(new AuthRequest(user.getEmail(), signUpRequest.password())))
+                .onErrorResume(e -> Mono.error(new RuntimeException(e.getMessage())));
     }
 }
