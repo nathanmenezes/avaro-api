@@ -1,6 +1,7 @@
 package br.com.mnz.avaroapi.domain.entity.common;
 
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 import org.springframework.data.annotation.Id;
@@ -8,13 +9,12 @@ import org.springframework.data.relational.core.mapping.Column;
 
 import java.io.Serializable;
 import java.time.Instant;
-import java.util.UUID;
 
 @Getter
 @Setter
 @ToString
+@NoArgsConstructor
 public abstract class BaseEntity implements Serializable {
-
     @Id
     @Column("id")
     private Long id;
@@ -24,9 +24,4 @@ public abstract class BaseEntity implements Serializable {
 
     @Column("slug")
     private String slug;
-
-    public BaseEntity() {
-        this.createdAt = Instant.now();
-        this.slug = UUID.randomUUID().toString();
-    }
 }
