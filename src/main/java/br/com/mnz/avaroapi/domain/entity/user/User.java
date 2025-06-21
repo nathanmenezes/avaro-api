@@ -2,7 +2,6 @@ package br.com.mnz.avaroapi.domain.entity.user;
 
 import br.com.mnz.avaroapi.domain.dto.request.auth.SignUpRequest;
 import br.com.mnz.avaroapi.domain.entity.common.BaseEntity;
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -14,7 +13,6 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @Setter
 @Table("users")
 @NoArgsConstructor
-@AllArgsConstructor
 public class User extends BaseEntity {
 
     @Column("email")
@@ -32,11 +30,16 @@ public class User extends BaseEntity {
     @Column("role")
     private String role;
 
-    public User(SignUpRequest signUpRequest, PasswordEncoder passwordEncoder) {
+    @Column("workspace_id")
+    private Long workspaceId;
+
+    public User(SignUpRequest signUpRequest,
+                PasswordEncoder passwordEncoder, Long workspaceId) {
         this.email = signUpRequest.email();
         this.password = passwordEncoder.encode(signUpRequest.password());
         this.nickname = signUpRequest.nickname();
         this.isActive = true;
         this.role = "USER";
+        this.workspaceId = workspaceId;
     }
 }
